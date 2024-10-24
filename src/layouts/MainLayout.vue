@@ -67,9 +67,8 @@
 /****************************************************************************/
 import { ref, computed, onMounted } from 'vue';
 import { Screen } from 'quasar';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
+import { EssentialLinkProps } from '@/components/EssentialLink.vue';
+import EssentialLink from '@/components/EssentialLink.vue';
 
 /****************************************************************************/
 /*                               DATA                                       */

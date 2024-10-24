@@ -10,7 +10,7 @@
 
 const { configure } = require('quasar/wrappers');
 require('dotenv').config();
-
+const path = require('path');
 module.exports = configure(function (/* ctx */) {
   require('dotenv').config();
 
@@ -83,6 +83,11 @@ module.exports = configure(function (/* ctx */) {
           { server: false },
         ],
       ],
+      alias: {
+        '@': path.join(__dirname, './src'),
+        '@components': path.join(__dirname, './src/components'),
+        '@composable': path.join(__dirname, './src/composable'),
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
