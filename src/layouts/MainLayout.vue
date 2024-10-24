@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header style="background-color: #676767" v-show="showHeader" elevated>
       <q-toolbar>
         <q-btn
           flat
@@ -12,24 +12,40 @@
         />
 
         <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+          <q-avatar
+            class="q-mx-sm"
+            style="background-color: white; border-radius: 50%"
+          >
+            <img src="../assets/fractal-world-logo.svg" />
+          </q-avatar>
 
-        <div>Quasar v{{ $q.version }}</div>
+          WorldSearch
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
-      bordered
+      :breakpoint="breakpoint"
+      style="
+        background-color: #676767;
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+      "
     >
-      <q-list>
-        <q-item-label
-          header
+      <q-list class="menu-list">
+        <q-item
+          v-show="!showHeader"
+          style="background-color: #dbdbdb; color: #676767; font-size: 1.5rem"
         >
-          Essential Links
-        </q-item-label>
+          <q-item-section avatar>
+            <q-img :size="'200px'" src="../assets/fractal-world-logo.svg" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>WorldSearch</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <EssentialLink
           v-for="link in linksList"
@@ -46,61 +62,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+/****************************************************************************/
+/*                               IMPORTS                                    */
+/****************************************************************************/
+import { ref, computed, onMounted } from 'vue';
+import { Screen } from 'quasar';
+import EssentialLink, {
+  EssentialLinkProps,
+} from 'components/EssentialLink.vue';
 
+/****************************************************************************/
+/*                               DATA                                       */
+/****************************************************************************/
 defineOptions({
-  name: 'MainLayout'
+  name: 'MainLayout',
 });
-
+const breakpoint = ref(600);
 const linksList: EssentialLinkProps[] = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Home',
+    link: 'home',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Vista 1',
+    link: 'view-1',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Vista 2',
+    link: 'view-2',
   },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ];
+const leftDrawerOpen = ref(true);
 
-const leftDrawerOpen = ref(false);
+/****************************************************************************/
+/*                                COMPUTED                                   */
+/****************************************************************************/
+const showHeader = computed(() => Screen.width <= breakpoint.value);
 
-function toggleLeftDrawer () {
+/****************************************************************************/
+/*                               METHODS                                    */
+/****************************************************************************/
+const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+};
+/****************************************************************************/
+/*                               LYFECICLE                                  */
+/****************************************************************************/
+onMounted(() => {
+  leftDrawerOpen.value = Screen.width > breakpoint.value;
+});
 </script>
+<style scoped>
+.menu-list .q-item {
+  margin: 5% 10% 0 10%;
+  border-radius: 10px;
+}
+</style>
