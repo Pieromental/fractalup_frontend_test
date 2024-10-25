@@ -5,7 +5,7 @@
       v-for="(country, index) in localConuntriesList"
       :key="index"
     >
-      <q-card class="my-card">
+      <q-card class="custom-card">
         <q-img
           :src="country.countryImageUrl"
           :ratio="16 / 9"
@@ -70,4 +70,9 @@ watch(
 /*                             LYFECICLE                                     */
 /****************************************************************************/
 </script>
-<style scoped></style>
+<style scoped>
+.custom-card {
+  border-radius: 35px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+</style>

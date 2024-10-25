@@ -30,6 +30,7 @@ import { PexelsParams } from '@/interface/Pexels';
 const { continents, load: loadContinents } = useContinents();
 const { countriesFiltered, fetchCountries } = useFilteredCountries();
 const { fetchImagesPexels } = usePexels();
+
 /****************************************************************************/
 /*                               WATCH                                      */
 /****************************************************************************/
