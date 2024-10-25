@@ -35,3 +35,26 @@ export const GET_FILTERED_COUNTRIES = gql`
     }
   }
 `;
+
+export const GET_COUNTRY = gql`
+  query GetCountry($code: ID!) {
+    country(code: $code) {
+      name
+      native
+      continent {
+        code
+        name
+      }
+      capital
+      languages {
+        code
+        name
+      }
+      currency
+      states {
+        code
+        name
+      }
+    }
+  }
+`;

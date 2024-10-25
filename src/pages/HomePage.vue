@@ -6,7 +6,10 @@
       :continent-list="continentList"
       :input-search="inputSearch"
     />
-    <CountriesGridComponent :countries-list="countriesList" />
+    <CountriesGridComponent
+      :countries-list="countriesList"
+      @serach-country="handleSearchCountry"
+    />
   </q-page>
 </template>
 
@@ -18,6 +21,7 @@ import { ref, watch, onMounted } from 'vue';
 import {
   useContinents,
   useFilteredCountries,
+  useCountryByCode,
 } from '@/composable/useTrevorBlades';
 import { usePexels } from '@/composable/usePexels';
 import SearchBarComponent from '@/components/SearchBarComponent.vue';
@@ -29,6 +33,7 @@ import { PexelsParams } from '@/interface/Pexels';
 /****************************************************************************/
 const { continents, load: loadContinents } = useContinents();
 const { countriesFiltered, fetchCountries } = useFilteredCountries();
+const { fetchCountryByCode } = useCountryByCode();
 const { fetchImagesPexels } = usePexels();
 
 /****************************************************************************/
@@ -87,6 +92,9 @@ const inputSearch = ref('');
 /****************************************************************************/
 const handleSearch = async (data: any) => {
   await fetchCountries(data.inputSearch, data.selectedContinents);
+};
+const handleSearchCountry = async (code: string) => {
+  await fetchCountryByCode(code);
 };
 const getRandomImage = (images: any) => {
   const randomIndex = Math.floor(Math.random() * images.length);

@@ -3,6 +3,7 @@ import {
   GET_COUNTRIES,
   GET_CONTINENTS,
   GET_FILTERED_COUNTRIES,
+  GET_COUNTRY,
 } from 'src/apollo/queries/trevorBlade';
 
 export function useCountries() {
@@ -66,4 +67,24 @@ export function useFilteredCountries() {
   };
 
   return { fetchCountries, countriesFiltered: result, loading, error };
+}
+export function useCountryByCode() {
+  const { load, result, loading, error } = useLazyQuery(GET_COUNTRY);
+
+  const fetchCountryByCode = async (code: string) => {
+    if (!code) {
+      console.error('El código del país es requerido.');
+      return null;
+    }
+
+    try {
+      await load(null, { code });
+      console.log('Consulta exitosa:', result.value);
+    } catch (err) {
+      console.error('Error al obtener el país:', err);
+      return null;
+    }
+  };
+
+  return { fetchCountryByCode, countryByCode: result, loading, error };
 }
