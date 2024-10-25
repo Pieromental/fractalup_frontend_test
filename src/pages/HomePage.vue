@@ -39,17 +39,25 @@
               />
             </div>
 
-            <div class="dropdown-grid">
-              <q-btn
+            <div class="row q-col-gutter-md">
+              <div
+                class="col-4 col-xs-12 col-sm-6 col-md-4 continent-card"
+                style="max-width: 250px"
                 v-for="(continent, index) in continentList"
                 :key="index"
-                flat
-                class="continent-btn"
-                @click="selectContinent(continent)"
               >
-                <img :src="continent.imageUrl" alt="" class="continent-img" />
-                <span>{{ continent.name }}</span>
-              </q-btn>
+                <q-card @click="selectContinent(continent)">
+                  <q-img
+                    :src="continent.imageUrl"
+                    spinner-color="primary"
+                    :ratio="16 / 9"
+                  />
+
+                  <q-card-section>
+                    <div class="text-h6">{{ continent.name }}</div>
+                  </q-card-section>
+                </q-card>
+              </div>
             </div>
           </div>
         </div>
@@ -142,7 +150,7 @@ onMounted(async () => {
   border-radius: 15px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 70%;
+  width: 60%;
   position: absolute;
 }
 
@@ -158,25 +166,12 @@ onMounted(async () => {
   align-items: center;
 }
 
-.dropdown-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.continent-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+.continent-card {
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
 
-.continent-btn:hover {
+.continent-card:hover {
   transform: scale(1.05);
 }
 
