@@ -1,10 +1,12 @@
 <template>
   <q-page class="q-pa-md">
-    <!-- Sidebar -->
+    <!-- MainContent -->
     <SearchBarComponent
+      @search="handleSearch"
       :continent-list="continentList"
       :input-search="inputSearch"
     />
+    <CountriesGridComponent :countries-list="countriesList" />
   </q-page>
 </template>
 
@@ -13,14 +15,21 @@
 /*                               IMPORTS                                    */
 /****************************************************************************/
 import { ref, watch, onMounted } from 'vue';
-import { useContinents } from '@/composable/useTrevorBlades';
+import {
+  useContinents,
+  useFilteredCountries,
+} from '@/composable/useTrevorBlades';
+import { usePexels } from '@/composable/usePexels';
 import SearchBarComponent from '@/components/SearchBarComponent.vue';
+import CountriesGridComponent from '@/components/CountriesGridComponent.vue';
+import { PexelsParams } from '@/interface/Pexels';
 
 /****************************************************************************/
 /*                               COMPOSABLE                                  */
 /****************************************************************************/
 const { continents, load: loadContinents } = useContinents();
-
+const { countriesFiltered, fetchCountries } = useFilteredCountries();
+const { fetchImagesPexels } = usePexels();
 /****************************************************************************/
 /*                               WATCH                                      */
 /****************************************************************************/
@@ -39,6 +48,28 @@ watch(
     }
   }
 );
+watch(
+  () => countriesFiltered.value,
+  async (newValue) => {
+    if (newValue) {
+      try {
+        const countries = await Promise.all(
+          newValue.countries.map(async (country: any) => ({
+            ...country,
+            countryImageUrl: await getImagesBackground(country.name),
+            flagImageUrl: `https://flagsapi.com/${country.code}/flat/64.png`,
+            selected: false,
+          }))
+        );
+
+        countriesList.value = countries;
+        console.log('Lista de países:', countriesList.value);
+      } catch (error) {
+        console.error('Error al procesar los países:', error);
+      }
+    }
+  }
+);
 
 /****************************************************************************/
 /*                               DATA                                       */
@@ -47,66 +78,42 @@ defineOptions({
   name: 'IndexPage',
 });
 const continentList = ref<any>([]);
+const countriesList = ref<any>([]);
 const inputSearch = ref('');
 
 /****************************************************************************/
 /*                               METHODS                                    */
 /****************************************************************************/
+const handleSearch = async (data: any) => {
+  await fetchCountries(data.inputSearch, data.selectedContinents);
+};
+const getRandomImage = (images: any) => {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+};
+const getImagesBackground = async (query: string) => {
+  if (!query) return;
+  const params = {
+    query: query,
+    per_page: 1,
+    orientation: 'landscape',
+    size: 'medium',
+  };
+
+  const images = await fetchImagesPexels(params as PexelsParams);
+  if (images && images.length > 0) {
+    return getRandomImage(images).src.medium;
+  } else {
+    return null;
+  }
+};
 
 /****************************************************************************/
 /*                               LIFECYCLE                                   */
 /****************************************************************************/
+
 onMounted(async () => {
   await loadContinents();
+  await fetchCountries();
 });
 </script>
-
-<style scoped>
-.custom-input {
-  background-color: white;
-  border-radius: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.custom-dropdown {
-  background-color: white;
-  border-radius: 15px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 60%;
-  position: absolute;
-}
-
-.dropdown-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.continent-card {
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.continent-card:hover {
-  transform: scale(1.05);
-}
-
-.continent-img {
-  width: 80px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.selected-card {
-  box-shadow: 0 0 10px var(--q-primary);
-}
-</style>

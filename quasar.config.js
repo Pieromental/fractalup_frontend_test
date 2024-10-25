@@ -43,7 +43,8 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       env: {
-        GRAPHQL_URI: process.env.GRAPHQL_URI, // Exportamos la variable para uso en el proyecto
+        GRAPHQL_URI: process.env.GRAPHQL_URI,
+        VITE_API_PEXELS: process.env.VITE_API_PEXELS,
       },
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],

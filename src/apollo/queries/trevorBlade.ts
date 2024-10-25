@@ -6,6 +6,7 @@ export const GET_COUNTRIES = gql`
       code
       name
       continent {
+        code
         name
       }
     }
@@ -17,6 +18,20 @@ export const GET_CONTINENTS = gql`
     continents {
       code
       name
+    }
+  }
+`;
+
+export const GET_FILTERED_COUNTRIES = gql`
+  query GetFilteredCountries($filter: CountryFilterInput) {
+    countries(filter: $filter) {
+      code
+      name
+      continent {
+        code
+        name
+      }
+      currency
     }
   }
 `;

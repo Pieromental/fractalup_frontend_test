@@ -10,6 +10,7 @@
             v-model="localInputSearch"
             label="País"
             @focus="showDropdown = true"
+            @update:model-value="emitSearch()"
           >
             <template v-slot:append>
               <q-btn
@@ -72,7 +73,15 @@
 /****************************************************************************/
 /*                               IMPORTS                                    */
 /****************************************************************************/
-import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue';
+import {
+  ref,
+  defineProps,
+  watch,
+  onMounted,
+  onUnmounted,
+  defineEmits,
+} from 'vue';
+import { debounce } from 'quasar';
 
 /****************************************************************************/
 /*                               PROPS                                      */
@@ -94,18 +103,24 @@ const showDropdown = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);
 const searchContainerRef = ref<HTMLElement | null>(null);
 /****************************************************************************/
+/*                             EMITS                                        */
+/****************************************************************************/
+const emit = defineEmits(['search']);
+/****************************************************************************/
 /*                             METHODS                                      */
 /****************************************************************************/
 const clearInput = () => {
   localInputSearch.value = '';
-
   localContinentList.value.forEach((continent: any) => {
     continent.selected = false;
   });
+
+  emitSearch();
 };
 
 const selectContinent = (continent: any) => {
   continent.selected = !continent.selected;
+  emitSearch();
 };
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -120,6 +135,15 @@ const handleClickOutside = (event: MouseEvent) => {
     showDropdown.value = false;
   }
 };
+
+const emitSearch = debounce(() => {
+  emit('search', {
+    inputSearch: localInputSearch.value,
+    selectedContinents: localContinentList.value
+      .filter((continent: any) => continent.selected)
+      .map((continent: any) => continent.code),
+  });
+}, 300);
 /****************************************************************************/
 /*                             WATCHERS                                     */
 /****************************************************************************/
