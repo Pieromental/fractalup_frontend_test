@@ -33,7 +33,7 @@ import { usePexels } from '@/composable/usePexels';
 import SearchBarComponent from '@/components/SearchBarComponent.vue';
 import CountriesGridComponent from '@/components/CountriesGridComponent.vue';
 import DrawerCountryComponent from '@/components/DrawerCountryComponent.vue';
-
+import { Screen } from 'quasar';
 /****************************************************************************/
 /*                               COMPOSABLE                                  */
 /****************************************************************************/
@@ -41,10 +41,22 @@ const { continents, load: loadContinents } = useContinents();
 const { countriesFiltered, fetchCountries } = useFilteredCountries();
 const { countryByCode, fetchCountryByCode } = useCountryByCode();
 const { fetchImagesPexels } = usePexels();
+const breakpoint = ref(600);
+/****************************************************************************/
+/*                               COMPUTED                                    */
+/****************************************************************************/
 
 /****************************************************************************/
 /*                               WATCH                                      */
 /****************************************************************************/
+watch(
+  () => Screen.width,
+  (newValue) => {
+    if (newValue <= breakpoint.value) {
+      closeDrawer();
+    }
+  }
+);
 watch(
   () => continents.value,
   (newValue) => {
@@ -75,7 +87,6 @@ watch(
         );
 
         countriesList.value = countries;
-        console.log('Lista de países:', countriesList.value);
       } catch (error) {
         console.error('Error al procesar los países:', error);
       }

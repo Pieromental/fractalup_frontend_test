@@ -1,5 +1,12 @@
 <template>
-  <q-drawer side="right" v-model="drawerState" overlay bordered :width="300">
+  <q-drawer
+    side="right"
+    v-model="drawerState"
+    overlay
+    bordered
+    :width="300"
+    :breakpoint="700"
+  >
     <q-layout view="lHh lpr lFf" container>
       <q-header class="custom-header">
         <q-btn
@@ -46,13 +53,26 @@
                 </q-item-section>
                 <q-item-section>{{ country.capital }}</q-item-section>
               </q-item>
-              <q-item>
+              <q-item v-if="country.languages && country.languages.length > 0">
                 <q-item-section>
                   <q-item-label class="text-primary text-bold text-h6">
-                    Language
+                    Languages
                   </q-item-label>
                 </q-item-section>
-                <q-item-section>{{ country.capital }}</q-item-section>
+                <q-item-section>
+                  <q-btn flat color="primary" icon="language">
+                    <q-menu>
+                      <q-list>
+                        <q-item
+                          v-for="(language, index) in country.languages"
+                          :key="index"
+                        >
+                          <q-item-section>{{ language.name }}</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
@@ -60,15 +80,29 @@
                     Currency
                   </q-item-label>
                 </q-item-section>
-                <q-item-section>{{ country.capital }}</q-item-section>
+                <q-item-section>{{ country.currency }}</q-item-section>
               </q-item>
-              <q-item>
+              <q-item v-if="country.states && country.states.length > 0">
                 <q-item-section>
                   <q-item-label class="text-primary text-bold text-h6">
                     Region
                   </q-item-label>
                 </q-item-section>
-                <q-item-section>{{ country.capital }}</q-item-section>
+
+                <q-item-section>
+                  <q-btn flat color="primary" icon="location_on">
+                    <q-menu>
+                      <q-list>
+                        <q-item
+                          v-for="(state, index) in country.states"
+                          :key="index"
+                        >
+                          <q-item-section>{{ state.name }}</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn></q-item-section
+                >
               </q-item>
             </q-list>
           </div>
@@ -117,7 +151,6 @@ watch(
 watch(
   () => props.country,
   (newValue: any) => {
-    console.log(newValue);
     localCountry.value = newValue;
   }
 );
