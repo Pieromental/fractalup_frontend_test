@@ -28,8 +28,10 @@ import {
   useFilteredCountries,
   useCountryByCode,
 } from '@/composable/useTrevorBlades';
+
 import { PexelsParams } from '@/interface/Pexels';
 import { usePexels } from '@/composable/usePexels';
+import { Loading, QSpinnerFacebook } from 'quasar';
 import SearchBarComponent from '@/components/SearchBarComponent.vue';
 import CountriesGridComponent from '@/components/CountriesGridComponent.vue';
 import DrawerCountryComponent from '@/components/DrawerCountryComponent.vue';
@@ -41,10 +43,8 @@ const { continents, load: loadContinents } = useContinents();
 const { countriesFiltered, fetchCountries } = useFilteredCountries();
 const { countryByCode, fetchCountryByCode } = useCountryByCode();
 const { fetchImagesPexels } = usePexels();
+
 const breakpoint = ref(600);
-/****************************************************************************/
-/*                               COMPUTED                                    */
-/****************************************************************************/
 
 /****************************************************************************/
 /*                               WATCH                                      */
@@ -160,13 +160,28 @@ const getImagesBackground = async (query: string) => {
     return null;
   }
 };
-
+const loading = async (type: string) => {
+  if (type == 'open') {
+    Loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: 'white',
+      spinnerSize: 140,
+      backgroundColor: 'primary',
+      message: 'Estamos procesando la información. En breve continuamos',
+      messageColor: 'white',
+    });
+  } else {
+    Loading.hide();
+  }
+};
 /****************************************************************************/
 /*                               LIFECYCLE                                   */
 /****************************************************************************/
 
 onMounted(async () => {
+  loading('open');
   await loadContinents();
   await fetchCountries();
+  loading('hide');
 });
 </script>
