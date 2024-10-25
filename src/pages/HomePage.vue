@@ -1,73 +1,10 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="row justify-center q-pt-lg">
-      <div style="position: relative" class="col-9 col-xs-12 col-sm-10 q-px-lg">
-        <div ref="searchContainerRef">
-          <q-input
-            class="custom-input"
-            borderless
-            placeholder="Escribe el país que deseas ver"
-            v-model="inputSearch"
-            label="País"
-            @focus="showDropdown = true"
-          >
-            <template v-slot:append>
-              <q-btn
-                rounded
-                style="background: #009cff; color: white"
-                icon="search"
-                label="Buscar"
-              />
-            </template>
-          </q-input>
-        </div>
-
-        <!-- Menú de filtros personalizado -->
-        <div
-          v-show="showDropdown"
-          class="custom-dropdown"
-          style="margin-top: 8px; z-index: 1000"
-          ref="dropdownRef"
-        >
-          <div class="dropdown-content">
-            <div class="dropdown-header">
-              <span>Filtrar por continentes</span>
-              <q-btn
-                color="primary"
-                flat
-                dense
-                label="Limpiar"
-                @click="clearInput()"
-              />
-            </div>
-
-            <div class="row q-col-gutter-md">
-              <div
-                class="col-4 col-xs-12 col-sm-6 col-md-4 continent-card"
-                style="max-width: 250px"
-                v-for="(continent, index) in continentList"
-                :key="index"
-              >
-                <q-card
-                  :class="{ 'selected-card': continent.selected }"
-                  @click="selectContinent(continent)"
-                >
-                  <q-img
-                    :src="continent.imageUrl"
-                    spinner-color="primary"
-                    :ratio="16 / 9"
-                  />
-
-                  <q-card-section>
-                    <div class="text-subtitle2">{{ continent.name }}</div>
-                  </q-card-section>
-                </q-card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Sidebar -->
+    <SearchBarComponent
+      :continent-list="continentList"
+      :input-search="inputSearch"
+    />
   </q-page>
 </template>
 
@@ -75,8 +12,9 @@
 /****************************************************************************/
 /*                               IMPORTS                                    */
 /****************************************************************************/
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useContinents } from '@/composable/useTrevorBlades';
+import SearchBarComponent from '@/components/SearchBarComponent.vue';
 
 /****************************************************************************/
 /*                               COMPOSABLE                                  */
@@ -110,48 +48,16 @@ defineOptions({
 });
 const continentList = ref<any>([]);
 const inputSearch = ref('');
-const showDropdown = ref(false);
-const selectedContinent = ref('');
-const dropdownRef = ref<HTMLElement | null>(null);
-const searchContainerRef = ref<HTMLElement | null>(null);
+
 /****************************************************************************/
 /*                               METHODS                                    */
 /****************************************************************************/
-const clearInput = () => {
-  inputSearch.value = '';
-  selectedContinent.value = '';
-  continentList.value.forEach((continent: any) => {
-    continent.selected = false;
-  });
-};
-
-const selectContinent = (continent: any) => {
-  continent.selected = !continent.selected;
-};
-
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement;
-
-  if (
-    dropdownRef.value &&
-    searchContainerRef.value &&
-    !dropdownRef.value.contains(target) &&
-    !searchContainerRef.value.contains(target)
-  ) {
-    showDropdown.value = false;
-  }
-};
 
 /****************************************************************************/
 /*                               LIFECYCLE                                   */
 /****************************************************************************/
 onMounted(async () => {
   await loadContinents();
-  document.addEventListener('mousedown', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('mousedown', handleClickOutside);
 });
 </script>
 
