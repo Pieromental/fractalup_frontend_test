@@ -41,6 +41,7 @@ export const GET_COUNTRY = gql`
     country(code: $code) {
       name
       native
+      code
       continent {
         code
         name

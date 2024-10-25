@@ -10,6 +10,11 @@
       :countries-list="countriesList"
       @serach-country="handleSearchCountry"
     />
+    <DrawerCountryComponent
+      :drawer-country="drawerCountry"
+      :country="countryData"
+      @close-drawer="closeDrawer"
+    />
   </q-page>
 </template>
 
@@ -17,23 +22,24 @@
 /****************************************************************************/
 /*                               IMPORTS                                    */
 /****************************************************************************/
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
 import {
   useContinents,
   useFilteredCountries,
   useCountryByCode,
 } from '@/composable/useTrevorBlades';
+import { PexelsParams } from '@/interface/Pexels';
 import { usePexels } from '@/composable/usePexels';
 import SearchBarComponent from '@/components/SearchBarComponent.vue';
 import CountriesGridComponent from '@/components/CountriesGridComponent.vue';
-import { PexelsParams } from '@/interface/Pexels';
+import DrawerCountryComponent from '@/components/DrawerCountryComponent.vue';
 
 /****************************************************************************/
 /*                               COMPOSABLE                                  */
 /****************************************************************************/
 const { continents, load: loadContinents } = useContinents();
 const { countriesFiltered, fetchCountries } = useFilteredCountries();
-const { fetchCountryByCode } = useCountryByCode();
+const { countryByCode, fetchCountryByCode } = useCountryByCode();
 const { fetchImagesPexels } = usePexels();
 
 /****************************************************************************/
@@ -76,6 +82,22 @@ watch(
     }
   }
 );
+watch(
+  () => countryByCode.value,
+  async (newValue) => {
+    if (newValue) {
+      try {
+        countryData.value = {
+          ...newValue.country,
+          countryImageUrl: await getImagesBackground(newValue.country.name),
+          flagImageUrl: `https://flagsapi.com/${newValue.country.code}/flat/64.png`,
+        };
+      } catch (error) {
+        console.error('Error al procesar el país:', error);
+      }
+    }
+  }
+);
 
 /****************************************************************************/
 /*                               DATA                                       */
@@ -85,7 +107,9 @@ defineOptions({
 });
 const continentList = ref<any>([]);
 const countriesList = ref<any>([]);
+const countryData = ref<any>({});
 const inputSearch = ref('');
+const drawerCountry = ref(false);
 
 /****************************************************************************/
 /*                               METHODS                                    */
@@ -95,6 +119,15 @@ const handleSearch = async (data: any) => {
 };
 const handleSearchCountry = async (code: string) => {
   await fetchCountryByCode(code);
+  nextTick(() => {
+    drawerCountry.value = !drawerCountry.value;
+  });
+};
+const closeDrawer = () => {
+  countriesList.value.forEach((countryItem: any) => {
+    countryItem.selected = false;
+  });
+  drawerCountry.value = false;
 };
 const getRandomImage = (images: any) => {
   const randomIndex = Math.floor(Math.random() * images.length);
