@@ -2,7 +2,6 @@
   <q-page>
     <div class="row justify-center q-pt-lg">
       <div style="position: relative" class="col-9 col-xs-12 col-sm-10 q-px-lg">
-        <!-- Input de búsqueda -->
         <q-input
           class="custom-input"
           borderless
@@ -42,13 +41,13 @@
 
             <div class="dropdown-grid">
               <q-btn
-                v-for="(continent, index) in continents.continents"
+                v-for="(continent, index) in continentList"
                 :key="index"
                 flat
                 class="continent-btn"
                 @click="selectContinent(continent)"
               >
-                <img :src="continent.image" alt="" class="continent-img" />
+                <img :src="continent.imageUrl" alt="" class="continent-img" />
                 <span>{{ continent.name }}</span>
               </q-btn>
             </div>
@@ -63,18 +62,40 @@
 /****************************************************************************/
 /*                               IMPORTS                                    */
 /****************************************************************************/
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useContinents } from '@/composable/useTrevorBlades';
+
 /****************************************************************************/
 /*                               COMPOSABLE                                  */
 /****************************************************************************/
-const { continents } = useContinents();
+const { continents, load: loadContinents } = useContinents();
+
+/****************************************************************************/
+/*                               WATCH                                      */
+/****************************************************************************/
+watch(
+  () => continents.value,
+  (newValue) => {
+    if (newValue) {
+      continentList.value = newValue.continents.map((continent: any) => ({
+        ...continent,
+        selected: false,
+        imageUrl: new URL(
+          `../assets/continents/${continent.code}.jpg`,
+          import.meta.url
+        ).href,
+      }));
+    }
+  }
+);
+
 /****************************************************************************/
 /*                               DATA                                       */
 /****************************************************************************/
 defineOptions({
   name: 'IndexPage',
 });
+const continentList = ref<any>([]);
 const inputSearch = ref('');
 const showDropdown = ref(false);
 const selectedContinent = ref('');
@@ -99,6 +120,12 @@ const handleBlur = (event: Event) => {
     showDropdown.value = false;
   }
 };
+/****************************************************************************/
+/*                               LYFECICLE                                   */
+/****************************************************************************/
+onMounted(async () => {
+  await loadContinents();
+});
 </script>
 
 <style scoped>

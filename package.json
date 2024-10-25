@@ -16,6 +16,7 @@
     "@apollo/client": "^3.8.6",
     "@quasar/extras": "^1.16.4",
     "@vue/apollo-composable": "^4.0.0",
+    "axios": "^1.7.7",
     "graphql": "^16.8.1",
     "quasar": "^2.16.0",
     "vue": "^3.4.18",
