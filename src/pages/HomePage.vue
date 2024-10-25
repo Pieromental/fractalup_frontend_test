@@ -1,31 +1,33 @@
 <template>
-  <q-page>
+  <q-page class="q-pa-md">
     <div class="row justify-center q-pt-lg">
       <div style="position: relative" class="col-9 col-xs-12 col-sm-10 q-px-lg">
-        <q-input
-          class="custom-input"
-          borderless
-          placeholder="Escribe el país que deseas ver"
-          v-model="inputSearch"
-          label="País"
-          @focus="showDropdown = true"
-          @blur="handleBlur"
-        >
-          <template v-slot:append>
-            <q-btn
-              rounded
-              style="background: #009cff; color: white"
-              icon="search"
-              label="Buscar"
-            />
-          </template>
-        </q-input>
+        <div ref="searchContainerRef">
+          <q-input
+            class="custom-input"
+            borderless
+            placeholder="Escribe el país que deseas ver"
+            v-model="inputSearch"
+            label="País"
+            @focus="showDropdown = true"
+          >
+            <template v-slot:append>
+              <q-btn
+                rounded
+                style="background: #009cff; color: white"
+                icon="search"
+                label="Buscar"
+              />
+            </template>
+          </q-input>
+        </div>
 
         <!-- Menú de filtros personalizado -->
         <div
           v-show="showDropdown"
           class="custom-dropdown"
           style="margin-top: 8px; z-index: 1000"
+          ref="dropdownRef"
         >
           <div class="dropdown-content">
             <div class="dropdown-header">
@@ -46,7 +48,10 @@
                 v-for="(continent, index) in continentList"
                 :key="index"
               >
-                <q-card @click="selectContinent(continent)">
+                <q-card
+                  :class="{ 'selected-card': continent.selected }"
+                  @click="selectContinent(continent)"
+                >
                   <q-img
                     :src="continent.imageUrl"
                     spinner-color="primary"
@@ -54,7 +59,7 @@
                   />
 
                   <q-card-section>
-                    <div class="text-h6">{{ continent.name }}</div>
+                    <div class="text-subtitle2">{{ continent.name }}</div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -70,7 +75,7 @@
 /****************************************************************************/
 /*                               IMPORTS                                    */
 /****************************************************************************/
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useContinents } from '@/composable/useTrevorBlades';
 
 /****************************************************************************/
@@ -107,32 +112,46 @@ const continentList = ref<any>([]);
 const inputSearch = ref('');
 const showDropdown = ref(false);
 const selectedContinent = ref('');
-
+const dropdownRef = ref<HTMLElement | null>(null);
+const searchContainerRef = ref<HTMLElement | null>(null);
 /****************************************************************************/
 /*                               METHODS                                    */
 /****************************************************************************/
 const clearInput = () => {
   inputSearch.value = '';
   selectedContinent.value = '';
+  continentList.value.forEach((continent: any) => {
+    continent.selected = false;
+  });
 };
 
-const selectContinent = (continent: { name: string }) => {
-  selectedContinent.value = continent.name;
+const selectContinent = (continent: any) => {
+  continent.selected = !continent.selected;
 };
 
-const handleBlur = (event: Event) => {
-  const relatedTarget = (event as FocusEvent)
-    .relatedTarget as HTMLElement | null;
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as HTMLElement;
 
-  if (!relatedTarget || !relatedTarget.closest('.q-menu')) {
+  if (
+    dropdownRef.value &&
+    searchContainerRef.value &&
+    !dropdownRef.value.contains(target) &&
+    !searchContainerRef.value.contains(target)
+  ) {
     showDropdown.value = false;
   }
 };
+
 /****************************************************************************/
-/*                               LYFECICLE                                   */
+/*                               LIFECYCLE                                   */
 /****************************************************************************/
 onMounted(async () => {
   await loadContinents();
+  document.addEventListener('mousedown', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
 });
 </script>
 
@@ -180,5 +199,8 @@ onMounted(async () => {
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
+}
+.selected-card {
+  box-shadow: 0 0 10px var(--q-primary);
 }
 </style>
