@@ -129,6 +129,7 @@ const handleSearch = async (data: any) => {
   await fetchCountries(data.inputSearch, data.selectedContinents);
 };
 const handleSearchCountry = async (code: string) => {
+  drawerCountry.value = false;
   await fetchCountryByCode(code);
   nextTick(() => {
     drawerCountry.value = !drawerCountry.value;
