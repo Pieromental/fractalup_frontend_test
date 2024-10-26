@@ -5,6 +5,7 @@
       @search="handleSearch"
       :continent-list="continentList"
       :input-search="inputSearch"
+      :loading="LoadingBtn"
     />
     <CountriesGridComponent
       :countries-list="countriesList"
@@ -40,7 +41,11 @@ import { Screen } from 'quasar';
 /*                               COMPOSABLE                                  */
 /****************************************************************************/
 const { continents, load: loadContinents } = useContinents();
-const { countriesFiltered, fetchCountries } = useFilteredCountries();
+const {
+  loading: LoadingBtn,
+  countriesFiltered,
+  fetchCountries,
+} = useFilteredCountries();
 const { countryByCode, fetchCountryByCode } = useCountryByCode();
 const { fetchImagesPexels } = usePexels();
 

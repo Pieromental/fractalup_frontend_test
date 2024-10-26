@@ -14,12 +14,18 @@
           >
             <template v-slot:append>
               <q-btn
+                :loading="localLoading"
                 rounded
                 style="background: #009cff; color: white"
                 icon="search"
                 label="Buscar"
                 @click="emitSearch()"
-              />
+              >
+                <template v-slot:loading>
+                  <q-spinner-hourglass class="on-left" />
+                  Buscando...
+                </template>
+              </q-btn>
             </template>
           </q-input>
         </div>
@@ -90,6 +96,7 @@ import { debounce } from 'quasar';
 const props = defineProps({
   inputSearch: { type: String, default: '' },
   continentList: { type: Array as any, default: () => [] },
+  loading: { type: Boolean, default: false },
 });
 
 /****************************************************************************/
@@ -100,6 +107,7 @@ defineOptions({
 });
 const localInputSearch = ref(props.inputSearch);
 const localContinentList = ref(props.continentList);
+const localLoading = ref(props.loading);
 const showDropdown = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);
 const searchContainerRef = ref<HTMLElement | null>(null);
@@ -158,6 +166,12 @@ watch(
   () => props.continentList,
   (newcontinentList: any) => {
     localContinentList.value = newcontinentList;
+  }
+);
+watch(
+  () => props.loading,
+  (newLoadingState: any) => {
+    localLoading.value = newLoadingState;
   }
 );
 /****************************************************************************/
