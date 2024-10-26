@@ -46,7 +46,6 @@ export function useFilteredCountries() {
 
     try {
       await load(null, variables);
-      console.log('Consulta exitosa:', result.value);
     } catch (err) {
       console.error('Error al hacer la consulta:', err);
     }
@@ -65,7 +64,6 @@ export function useCountryByCode() {
 
     try {
       await load(null, { code });
-      console.log('Consulta exitosa:', result.value);
     } catch (err) {
       console.error('Error al obtener el país:', err);
       return null;

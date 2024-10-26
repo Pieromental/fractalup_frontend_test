@@ -16,14 +16,17 @@
               <q-btn
                 :loading="localLoading"
                 rounded
+                class="search-button"
                 style="background: #009cff; color: white"
                 icon="search"
-                label="Buscar"
+                :label="localLoading ? '' : 'Buscar'"
                 @click="emitSearch()"
               >
                 <template v-slot:loading>
-                  <q-spinner-hourglass class="on-left" />
-                  Buscando...
+                  <div class="row items-center no-wrap loading-content">
+                    <q-spinner-hourglass class="spinner" />
+                    <span class="loading-text">Buscando...</span>
+                  </div>
                 </template>
               </q-btn>
             </template>
@@ -229,5 +232,42 @@ onUnmounted(() =>
 }
 .selected-card {
   box-shadow: 0 0 10px var(--q-primary);
+}
+.search-button {
+  background: #009cff;
+  color: white;
+  min-width: 120px;
+  height: 36px;
+  transition: min-width 0.3s ease;
+}
+
+.search-button .loading-content {
+  width: 100%;
+  justify-content: center;
+  gap: 4px;
+}
+
+.search-button .spinner {
+  font-size: 1.2em;
+}
+
+.search-button .loading-text {
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+  .search-button {
+    min-width: 40px;
+    padding: 0 8px;
+  }
+
+  .search-button .loading-content {
+    width: auto;
+  }
+
+  .search-button .loading-text {
+    display: none;
+  }
 }
 </style>
