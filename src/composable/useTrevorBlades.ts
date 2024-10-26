@@ -1,3 +1,4 @@
+import { CountryFilterInput } from '@/interface/TrevorBlades';
 import { useLazyQuery } from '@vue/apollo-composable';
 import {
   GET_COUNTRIES,
@@ -26,21 +27,6 @@ export function useContinents() {
     loading,
     error,
   };
-}
-
-interface StringQueryOperatorInput {
-  eq?: string;
-  in?: string[];
-  ne?: string;
-  nin?: string[];
-  regex?: string;
-}
-
-interface CountryFilterInput {
-  code?: StringQueryOperatorInput;
-  continent?: StringQueryOperatorInput;
-  currency?: StringQueryOperatorInput;
-  name?: StringQueryOperatorInput;
 }
 
 export function useFilteredCountries() {

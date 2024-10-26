@@ -18,6 +18,7 @@
                 style="background: #009cff; color: white"
                 icon="search"
                 label="Buscar"
+                @click="emitSearch()"
               />
             </template>
           </q-input>

@@ -1,7 +1,3 @@
-export interface CountryFilterInput {
-  name?: { regex: string };
-  continent?: { in: string[] };
-}
 export interface Country {
   code: string;
   name: string;
@@ -17,4 +13,19 @@ export interface CountriesData {
 
 export interface Variables {
   filter: CountryFilterInput;
+}
+
+export interface StringQueryOperatorInput {
+  eq?: string;
+  in?: string[];
+  ne?: string;
+  nin?: string[];
+  regex?: string;
+}
+
+export interface CountryFilterInput {
+  code?: StringQueryOperatorInput;
+  continent?: StringQueryOperatorInput;
+  currency?: StringQueryOperatorInput;
+  name?: StringQueryOperatorInput;
 }
